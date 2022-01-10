@@ -36,7 +36,6 @@ public class RequestBuilder {
         //System.out.println(header);
 
         parseMethodeAndRoute(request, header);
-        // TODO parse parameters
         parseAuthorization(request, header);
         parseContentType(request, header);
         parseContentLength(request, header);

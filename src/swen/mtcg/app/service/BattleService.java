@@ -25,20 +25,12 @@ public class BattleService {
             Battle newbattle = new Battle(user);
             startBattle(newbattle);
             waitingRoom(newbattle);
-            while (newbattle.getStatus()){
-                try {
-                    TimeUnit.SECONDS.sleep(1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            stopBattle(newbattle);
             return newbattle;
         }else {
             for (Battle battle : activeBattle) {
                 if (battle.getStatus()) {
                     battle.setContestant2(user);
-                    waitingRoom(battle);
+                    stopBattle(battle);
                     while (battle.getStatus()) {
                         try {
                             TimeUnit.SECONDS.sleep(1);
@@ -46,9 +38,8 @@ public class BattleService {
                             e.printStackTrace();
                         }
                     }
-                    stopBattle(battle);
                     return battle;
-                } else {
+                } /*else {
                     Battle newbattle = new Battle(user);
                     startBattle(newbattle);
                     waitingRoom(newbattle);
@@ -61,7 +52,7 @@ public class BattleService {
                     }
                     stopBattle(newbattle);
                     return newbattle;
-                }
+                }*/
             }
         }
         return new Battle(user);

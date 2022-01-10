@@ -162,7 +162,7 @@ public class Battle {
 
             if (specialty == 1) {
 
-                turn.append("Goblin is too afreid of the Dragon!");
+                turn.append("Goblin is too afraid of the Dragon!");
                 deckContestant1.removeCard(card1);
                 deckContestant2.addCard(card1);
             }
