@@ -22,6 +22,7 @@ public class MtcgAPI implements ServerApplication {
     private final DeckController deckController;
     private final BattleController battleController;
     private final BattleService battleService = new BattleService();
+    private final StatController statController;
 
     public MtcgAPI() {
         userController = new UserController(
@@ -52,6 +53,9 @@ public class MtcgAPI implements ServerApplication {
                 userService,
                 battleService
         );
+        statController = new StatController(
+                userService
+        );
     }
 
     @Override
@@ -76,7 +80,7 @@ public class MtcgAPI implements ServerApplication {
             return deckController.handleRequest(request);
         }
         if (request.getRoute().contains("/stats")){
-
+            return statController.handleRequest(request);
         }
         if (request.getRoute().contains("/score")){
 
