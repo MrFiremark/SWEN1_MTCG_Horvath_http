@@ -18,6 +18,12 @@ public class User {
     private int coins;
     @JsonProperty("ELO")
     private int elo;
+    @JsonProperty("Name")
+    private String name;
+    @JsonProperty("Bio")
+    private String bio;
+    @JsonProperty("Image")
+    private String image;
     @JsonProperty("Stack")
     private  ArrayList<Card> stack;
     @JsonIgnore
@@ -71,6 +77,42 @@ public class User {
 
     public int getElo() {
         return elo;
+    }
+
+    public void setUserid(String userid) {
+        this.userid = userid;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public void setStack(ArrayList<Card> stack) {

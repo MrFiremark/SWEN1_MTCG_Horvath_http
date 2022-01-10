@@ -273,38 +273,50 @@ public class UserRepository extends Repository{
         }
     }
 
-    public void readProfile(String userid){
+    public User readProfile(User user){
         try (
                 Connection connection = getConnection();
                 PreparedStatement statement = connection.prepareStatement(
-                        "SELECT userid, name, bio, image FROM profile WHERE userid = ?;"
+                        "SELECT name, bio, image FROM profile WHERE userid = ?;"
                 )
         ) {
 
-            statement.setString(1, userid);
+            statement.setString(1, user.getUserid());
             ResultSet resultSet = statement.executeQuery();
-
-
+            if(resultSet.next()){
+                user.setName(resultSet.getString("name"));
+                user.setBio(resultSet.getString("bio"));
+                user.setImage(resultSet.getString("image"));
+            }
 
         } catch (SQLException | IOException e) {
             e.printStackTrace();
         }
+
+        return user;
     }
 
-    public void editProfile(String userid){
+    public User editProfile(User user){
         try (
                 Connection connection = getConnection();
                 PreparedStatement statement = connection.prepareStatement(
-                        "INSERT INTO profile (userid) VALUES(?);"
+                        "UPDATE player SET name = ?, bio = ?, image = ? WHERE userid = ?;"
                 )
         ) {
 
-            statement.setString(1, userid);
+            statement.setString(1, user.getName());
+            statement.setString(2, user.getBio());
+            statement.setString(3, user.getImage());
+            statement.setString(4, user.getUserid());
             statement.execute();
+
+            user = readProfile(user);
 
         } catch (SQLException | IOException e) {
             e.printStackTrace();
         }
+
+        return user;
     }
 
 }

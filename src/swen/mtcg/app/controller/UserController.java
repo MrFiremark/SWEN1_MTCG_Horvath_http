@@ -1,6 +1,7 @@
 package swen.mtcg.app.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import swen.mtcg.app.model.User;
 import swen.mtcg.app.service.UserService;
@@ -28,12 +29,12 @@ public class UserController extends Controller{
         if (request.getMethod().equals("POST")) {
             return addUser(request.getContent());
         }
-        if (check.equals(userpath)) {
+        if (check.equals(userpath) && userService.checkUserLoggedIn(check)) {
             if (request.getMethod().equals("GET")) {
-                return getUserData();
+                return getUserData(check);
             }
             if (request.getMethod().equals("PUT")) {
-                return editUserData(request.getContent());
+                return editUserData(request.getContent(), check);
             }
         }
         return response(
@@ -63,15 +64,43 @@ public class UserController extends Controller{
         return new Response(contain);
     }
 
-    public Response getUserData(){
+    public Response getUserData(String username){
 
-        return new Response();
+        ObjectMapper objectMapper = new ObjectMapper();
+        User user = userService.getUser(username);
+        user = userRepository.readProfile(user);
+        String contain = "";
+
+        try {
+            contain = objectMapper.writeValueAsString(user);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        return new Response(contain);
     }
 
-    public  Response editUserData(String json){
+    public  Response editUserData(String json, String username){
 
+        ObjectMapper objectMapper = new ObjectMapper();
+        User user = userService.getUser(username);
+        String contain = "";
 
+        try {
+            JsonNode jsonNode = objectMapper.readTree(json);
 
-        return new Response();
+            user.setName(jsonNode.get("Name").textValue());
+            user.setBio(jsonNode.get("Bio").textValue());
+            user.setImage(jsonNode.get("Image").textValue());
+
+            user = userRepository.editProfile(user);
+
+            contain = objectMapper.writeValueAsString(user);
+
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        return new Response(contain);
     }
 }
