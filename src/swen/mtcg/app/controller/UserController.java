@@ -23,20 +23,25 @@ public class UserController extends Controller{
 
     public Response handleRequest(Request request) {
 
-        String check = request.getAuthentication().substring(6).replace("-mtcgToken", "");
-        String userpath = request.getRoute().substring(7);
-
         if (request.getMethod().equals("POST")) {
             return addUser(request.getContent());
         }
-        if (check.equals(userpath) && userService.checkUserLoggedIn(check)) {
+
             if (request.getMethod().equals("GET")) {
-                return getUserData(check);
+                String check = request.getAuthentication().substring(6).replace("-mtcgToken", "");
+                String userpath = request.getRoute().substring(7);
+                if (check.equals(userpath) && userService.checkUserLoggedIn(check)) {
+                    return getUserData(check);
+                }
             }
             if (request.getMethod().equals("PUT")) {
-                return editUserData(request.getContent(), check);
+                String check = request.getAuthentication().substring(6).replace("-mtcgToken", "");
+                String userpath = request.getRoute().substring(7);
+                if (check.equals(userpath) && userService.checkUserLoggedIn(check)) {
+                    return editUserData(request.getContent(), check);
+                }
             }
-        }
+
         return response(
                 HttpStatus.NOT_FOUND,
                 ContentType.HTML,

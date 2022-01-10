@@ -4,6 +4,7 @@ import swen.mtcg.app.controller.*;
 import swen.mtcg.app.service.BattleService;
 import swen.mtcg.app.service.UserService;
 import swen.mtcg.repository.PackageRepository;
+import swen.mtcg.repository.ScoreboardRepository;
 import swen.mtcg.repository.UserRepository;
 import swen.mtcg.server.ServerApplication;
 import swen.mtcg.server.http.ContentType;
@@ -23,6 +24,7 @@ public class MtcgAPI implements ServerApplication {
     private final BattleController battleController;
     private final BattleService battleService = new BattleService();
     private final StatController statController;
+    private final ScoreboardController scoreboardController;
 
     public MtcgAPI() {
         userController = new UserController(
@@ -56,6 +58,10 @@ public class MtcgAPI implements ServerApplication {
         statController = new StatController(
                 userService
         );
+        scoreboardController = new ScoreboardController(
+                userService,
+                new ScoreboardRepository()
+        );
     }
 
     @Override
@@ -83,7 +89,7 @@ public class MtcgAPI implements ServerApplication {
             return statController.handleRequest(request);
         }
         if (request.getRoute().contains("/score")){
-
+            return scoreboardController.handleRequest(request);
         }
         if (request.getRoute().contains("/battle")){
             return battleController.handleRequest(request);

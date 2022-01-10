@@ -39,7 +39,9 @@ public class BattleService {
                         }
                     }
                     return battle;
-                } /*else {
+                }
+                //auskommintierter Code wurde ursprünglich implementiert für den Fall dass mehr als zwei User gleichzeitig (5+ nach einem Battle suchen)
+                /*else {
                     Battle newbattle = new Battle(user);
                     startBattle(newbattle);
                     waitingRoom(newbattle);
