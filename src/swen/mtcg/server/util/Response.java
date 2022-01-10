@@ -27,6 +27,12 @@ public class Response {
 
     }
 
+    public Response(HttpStatus httpStatus, String content){
+        setStatus(httpStatus);
+        contentType = "text/html";
+        this.content = content;
+    }
+
     public int getStatus() {
         return status;
     }

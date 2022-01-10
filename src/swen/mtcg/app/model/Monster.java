@@ -9,7 +9,7 @@ public class Monster extends Card {
     @JsonProperty("Monstertype")
     private String monsterType;
 
-    public Monster(String id, String name, String cardType, Elements element, Rarities rarity, double damage, String monsterType) {
+    public Monster(String id, String cardType, String name, Elements element, Rarities rarity, double damage, String monsterType) {
         super(id, cardType, name, element, rarity, damage);
         this.monsterType = monsterType;
     }

@@ -63,11 +63,11 @@ public class MtcgAPI implements ServerApplication {
         if (request.getRoute().contains("/sessions")){
             return sessionController.handleRequest(request);
         }
+        if (request.getRoute().contains("/transactions/packages")){
+            return transaktionController.handleRequest(request);
+        }
         if (request.getRoute().contains("/packages")){
             return packageController.handleRequest(request);
-        }
-        if (request.getRoute().contains("/transaction")){
-            return transaktionController.handleRequest(request);
         }
         if (request.getRoute().contains("/cards")){
             return cardController.handleRequest(request);

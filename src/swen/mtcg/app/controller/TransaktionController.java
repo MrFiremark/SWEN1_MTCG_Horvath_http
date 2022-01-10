@@ -50,7 +50,6 @@ public class TransaktionController extends Controller{
 
         ObjectMapper objectMapper = new ObjectMapper();
         User buyer = userService.getUser(user);
-        ArrayList<Card> stack = new ArrayList<>();
         Pack pack = new Pack();
         Card[] cards = new Card[5];
 
@@ -61,12 +60,13 @@ public class TransaktionController extends Controller{
             //deduct Coins from User
             buyer.setCoins(buyer.getCoins() - pack.getCost());
             //Copy Pack into ArrayList to update Stack from User Class and DB with it
-            Collections.addAll(stack, pack.getPackCards());
-            buyer.setStack(stack);
+            buyer.updateStack(pack.getPackCards());
             userService.updateUser(buyer);
             userRepository.updateUserStack(buyer);
             //Update UserData with new Coins for persitency
             userRepository.updateUserData(buyer);
+        }else {
+            return new Response(HttpStatus.UNAUTHORIZED, "Not Enough Coins!");
         }
 
         String contain = "";

@@ -18,7 +18,9 @@ public class PackageRepository extends Repository{
                 )
         ) {
             createPackageCards(cards);
+
             int packageid = getpackageid();
+
             for (Card card : cards) {
                 statement.setInt(1, packageid);
                 statement.setObject(2, card.getId());
@@ -83,7 +85,21 @@ public class PackageRepository extends Repository{
         try (
                 Connection connection = getConnection();
                 PreparedStatement statement = connection.prepareStatement(
-                        "Select MIN(packageid), id, name, damage, cardtype, element, monstertype, rarity From package JOIN card ON package.cardid=card.id GROUP BY id, name, damage, cardtype, element, monstertype, rarity;"
+                        "Select \n" +
+                                "\tb.cardid, name, damage, cardtype, element, monstertype, rarity\n" +
+                                "\tFROM (\n" +
+                                "\t\t\tSelect \n" +
+                                "\t\t\t\tpackageid, cardid \n" +
+                                "\t\t\t\t\tfrom package \n" +
+                                "\t\t\t\t\tJOIN (\n" +
+                                "\t\t\t\t\t\tSelect \n" +
+                                "\t\t\t\t\t\t\tMIN(packageid) as min \n" +
+                                "\t\t\t\t\t\t\t\tfrom package\n" +
+                                "\t\t\t\t\t) a \n" +
+                                "\t\t\t\t\t\tON package.packageid=a.min\n" +
+                                "\t\t) b\n" +
+                                "\t\tJOIN card\t\t\n" +
+                                "\t\t\tON b.cardid=card.id;"
                 );
                 PreparedStatement statement1 = connection.prepareStatement("DELETE FROM package WHERE packageid = (SELECT MIN(packageid) FROM package)")
 
@@ -95,7 +111,7 @@ public class PackageRepository extends Repository{
                 if(resultSet.getString("cardtype").equals("Monster")){
 
                     cards[i] = new Monster(
-                            resultSet.getString("id"),
+                            resultSet.getString("cardid"),
                             resultSet.getString("cardtype"),
                             resultSet.getString("name"),
                             Elements.valueOf(resultSet.getString("element")),
@@ -106,7 +122,7 @@ public class PackageRepository extends Repository{
                 }else{
 
                     cards[i] = new Spell(
-                            resultSet.getString("id"),
+                            resultSet.getString("cardid"),
                             resultSet.getString("cardtype"),
                             resultSet.getString("name"),
                             Elements.valueOf(resultSet.getString("element")),

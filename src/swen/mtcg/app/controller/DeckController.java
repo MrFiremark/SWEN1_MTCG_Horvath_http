@@ -56,14 +56,20 @@ public class DeckController extends Controller{
                 for (int i = 0; i < jsonNode.size(); i++) {
                     //Check to see if the User has the Card in his Stack
                     if (user.checkStack(jsonNode.get(i).textValue())) {
+
                         if (jsonNode.size() == 4 && user.getDeck().getDeckLength() == 0) {
+
                             //Write the new Deck into the DB
                             userRepository.createDeck(user, jsonNode.get(i).textValue());
+
                         }else if (jsonNode.size() == 4 && user.getDeck().getDeckLength() == 4){
+
                             userRepository.updateDeck(user, jsonNode.get(i).textValue());
+                            System.out.println("Deckupdated");
                         }
                     }
                 }
+                System.out.println("Deck created");
             }
             //set the Deck for the temporary User by selecting the Deck from DB
             user.setDeck(userRepository.getDeck(user.getUserid()));
@@ -79,6 +85,18 @@ public class DeckController extends Controller{
     }
 
     public Response showDeck(String username){
-        return null;
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        User user = userService.getUser(username);
+        String contain = "";
+
+        try {
+            contain = objectMapper.writeValueAsString(user.getDeck());
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        return new Response(contain);
+
     }
 }

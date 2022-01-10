@@ -28,14 +28,6 @@ public abstract class Card {
         this.damage = damage;
     }
 
-    public Card(String name, Elements element, Rarities rarity, int damage) {
-        this.id = UUID.randomUUID().toString();
-        this.name = name;
-        this.element = element;
-        this.rarity = rarity;
-        this.damage = damage;
-    }
-
     public String getId() {
         return id;
     }

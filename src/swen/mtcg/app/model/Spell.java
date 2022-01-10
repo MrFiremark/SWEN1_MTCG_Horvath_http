@@ -8,7 +8,7 @@ public class Spell extends Card {
 
 
 
-    public Spell(String id, String name, String cardType, Elements element, Rarities rarity, double damage) {
+    public Spell(String id,  String cardType, String name, Elements element, Rarities rarity, double damage) {
         super(id, cardType, name, element, rarity, damage);
     }
 

@@ -39,7 +39,10 @@ public class UserController extends Controller{
         String contain = "";
         try {
             user = objectMapper.readValue(json, User.class);
-            userRepository.register(user.getUsername(), user.getPassword());
+            if (!userRepository.register(user.getUsername(), user.getPassword())){
+                return new Response(HttpStatus.BAD_REQUEST, "User already exists");
+            }
+
             System.out.println("New User Registererd");
             contain = objectMapper.writeValueAsString(user);
 

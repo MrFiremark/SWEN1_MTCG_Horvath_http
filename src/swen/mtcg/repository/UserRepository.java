@@ -15,14 +15,14 @@ import java.util.UUID;
 
 public class UserRepository extends Repository{
 
-    public void register(String username, String password) {
+    public Boolean register(String username, String password) {
         try (
                 Connection connection = getConnection();
                 PreparedStatement statement = connection.prepareStatement(
                         "INSERT INTO player (id, username, password, coin, elo) VALUES (?, ?, ?, ?, ?);"
                 )
         ) {
-            statement.setObject(1, UUID.randomUUID());
+            statement.setObject(1, UUID.randomUUID().toString());
             statement.setString(2, username);
             statement.setString(3, String.valueOf(password.hashCode()));
             statement.setInt(4, 20);
@@ -30,8 +30,11 @@ public class UserRepository extends Repository{
 
             statement.execute();
 
+            return true;
+
         } catch (SQLException | IOException e) {
             e.printStackTrace();
+            return false;
         }
     }
 
@@ -45,7 +48,6 @@ public class UserRepository extends Repository{
                                 "       WHERE username = ? AND password = ?"
                 );
         ) {
-
             statement.setString(1, username);
             statement.setString(2, String.valueOf(password.hashCode()));
             ResultSet resultSet = statement.executeQuery();
@@ -61,7 +63,6 @@ public class UserRepository extends Repository{
                 );
             }
 
-
             Objects.requireNonNull(user).setStack(getStack(user.getUserid()));
 
             Objects.requireNonNull(user).setDeck(getDeck(user.getUserid()));
@@ -71,6 +72,7 @@ public class UserRepository extends Repository{
         } catch (SQLException | IOException e) {
             e.printStackTrace();
         }
+
         return null;
     }
 
@@ -178,12 +180,13 @@ public class UserRepository extends Repository{
         try (
                 Connection connection = getConnection();
                 PreparedStatement statement = connection.prepareStatement(
-                        "UPDATE player SET username = ?, coin = ?, elo = ?;"
+                        "UPDATE player SET username = ?, coin = ?, elo = ? WHERE id = ?;"
                 )
         ) {
             statement.setObject(1, user.getUsername());
             statement.setInt(2, user.getCoins());
             statement.setInt(3, user.getElo());
+            statement.setString(4, user.getUserid());
 
             statement.execute();
 
@@ -198,7 +201,7 @@ public class UserRepository extends Repository{
                 PreparedStatement statement = connection.prepareStatement(
                         "INSERT INTO stack (userid, cardid) VALUES(?, ?);"
                 );
-                PreparedStatement statement1 = connection.prepareStatement("UPDATE stack SET userid = ?, cardid = ?")
+                //PreparedStatement statement1 = connection.prepareStatement("UPDATE stack SET userid = ?, cardid = ?")
 
         ) {
             ArrayList<Card> stack = new ArrayList<>(user.getStack());
@@ -206,9 +209,8 @@ public class UserRepository extends Repository{
             for (Card card: stack) {
                 statement.setString(1, user.getUserid());
                 statement.setString(2, card.getId());
+                statement.execute();
             }
-
-            statement.execute();
 
         } catch (SQLException | IOException e) {
             e.printStackTrace();

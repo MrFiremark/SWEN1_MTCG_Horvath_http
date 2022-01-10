@@ -45,36 +45,29 @@ public class Battle {
         return log;
     }
 
-    public void waitingRoom(){
-
-        long startmillis = System.currentTimeMillis();
-        int seconds = 0;
-        while(contestant2.getUsername().length() == 0 && seconds <= 180){
-
-            try {
-                TimeUnit.SECONDS.sleep(1);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            seconds = (int)((System.currentTimeMillis() - startmillis) /1000);
-
-        }
-        if (contestant2.getUsername().length() != 0){
-            fight();
-        }
-    }
-
     public void fight(){
 
         log.clear();
 
-        deckContestant1 = contestant1.getDeck();
-        deckContestant2 = contestant2.getDeck();
+        deckContestant1 = new Deck(contestant1.getDeck().getDeckCards());
+        deckContestant2 = new Deck(contestant2.getDeck().getDeckCards());
 
-        while ((deckContestant1.getDeckLength() > 1 && deckContestant2.getDeckLength() > 1) || maxTurns == turnCounter){
+        while ((deckContestant1.getDeckLength() > 0 && deckContestant2.getDeckLength() > 0) && turnCounter <= maxTurns){
             log.add(cardBattle(deckContestant1.getRandomDeckCard(), deckContestant2.getRandomDeckCard()));
-
             turnCounter++;
+        }
+
+        if (turnCounter >= 100){
+            log.add("DRAW!");
+        }
+        else if (deckContestant1.getDeckLength() == 0){
+            log.add(contestant1.getUsername() + " wins!");
+        }else{
+            log.add(contestant2.getUsername() + " wins!");
+        }
+
+        for (String ausgabe: log) {
+            System.out.println(ausgabe);
         }
 
         status = false;
@@ -98,7 +91,8 @@ public class Battle {
         turn.append(card2.getDamage());
         turn.append(" ) => ");
 
-        if(specialty(card1, card2) == 0) {
+        int specialty = specialty(card1, card2);
+        if(specialty == 0) {
 
             if (card1 instanceof Monster && card2 instanceof Monster) {
 
@@ -140,6 +134,7 @@ public class Battle {
                 turn.append(card1Multiplier);
                 turn.append(" VS ");
                 turn.append(card2Multiplier);
+                turn.append("\n");
 
                 if (card1Multiplier == card2Multiplier) {
 
@@ -165,66 +160,65 @@ public class Battle {
             }
         }else{
 
-            switch (specialty(card1, card2)){
-                case 1:
+            if (specialty == 1) {
 
-                    turn.append("Goblin is too afreid of the Dragon!");
-                    deckContestant1.removeCard(card1);
-                    deckContestant2.addCard(card1);
+                turn.append("Goblin is too afreid of the Dragon!");
+                deckContestant1.removeCard(card1);
+                deckContestant2.addCard(card1);
+            }
+            if (specialty == 2) {
 
-                case 2:
+                turn.append("Goblin is too afreid of the Dragon!");
+                deckContestant1.addCard(card2);
+                deckContestant2.removeCard(card2);
+            }
+            if (specialty == 3) {
 
-                    turn.append("Goblin is too afreid of the Dragon!");
-                    deckContestant1.addCard(card2);
-                    deckContestant2.removeCard(card2);
+                turn.append("The Wizard controls the Ork with his mindmagic");
+                deckContestant1.addCard(card2);
+                deckContestant2.removeCard(card2);
+            }
+            if (specialty == 4) {
 
-                case 3:
+                turn.append("The Wizard controls the Ork with his mindmagic");
+                deckContestant1.removeCard(card1);
+                deckContestant2.addCard(card1);
+            }
+            if (specialty == 5) {
 
-                    turn.append("The Wizard controls the Ork with his mindmagic");
-                    deckContestant1.addCard(card2);
-                    deckContestant2.removeCard(card2);
+                turn.append("The armor of Knights is so heavy that WaterSpells make them drown them instantly!");
+                deckContestant1.removeCard(card1);
+                deckContestant2.addCard(card1);
+            }
+            if (specialty == 6) {
 
-                case 4:
+                turn.append("The armor of Knights is so heavy that WaterSpells make them drown them instantly!");
+                deckContestant1.addCard(card2);
+                deckContestant2.removeCard(card2);
+            }
+            if (specialty == 7) {
 
-                    turn.append("The Wizard controls the Ork with his mindmagic");
-                    deckContestant1.removeCard(card1);
-                    deckContestant2.addCard(card1);
+                turn.append("The Kraken is immune to Spells!");
+                deckContestant1.addCard(card2);
+                deckContestant2.removeCard(card2);
+            }
+            if (specialty == 8) {
 
-                case 5:
+                turn.append("The Kraken is immune to Spells!");
+                deckContestant1.removeCard(card1);
+                deckContestant2.addCard(card1);
+            }
+            if (specialty == 9) {
 
-                    turn.append("The armor of Knights is so heavy that WaterSpells make them drown them instantly!");
-                    deckContestant1.removeCard(card1);
-                    deckContestant2.addCard(card1);
+                turn.append("The Elves studied the Dragons attack and evade them!");
+                deckContestant1.addCard(card2);
+                deckContestant2.removeCard(card2);
+            }
+            if (specialty == 10) {
 
-                case 6:
-
-                    turn.append("The armor of Knights is so heavy that WaterSpells make them drown them instantly!");
-                    deckContestant1.addCard(card2);
-                    deckContestant2.removeCard(card2);
-
-                case 7:
-
-                    turn.append("The Kraken is immune to Spells!");
-                    deckContestant1.addCard(card2);
-                    deckContestant2.removeCard(card2);
-
-                case 8:
-
-                    turn.append("The Kraken is immune to Spells!");
-                    deckContestant1.removeCard(card1);
-                    deckContestant2.addCard(card1);
-
-                case 9:
-
-                    turn.append("The Elves studied the Dragons attack and evade them!");
-                    deckContestant1.addCard(card2);
-                    deckContestant2.removeCard(card2);
-
-                case 10:
-
-                    turn.append("The Elves studied the Dragons attack and evade them!");
-                    deckContestant1.removeCard(card1);
-                    deckContestant2.addCard(card1);
+                turn.append("The Elves studied the Dragons attack and evade them!");
+                deckContestant1.removeCard(card1);
+                deckContestant2.addCard(card1);
             }
 
         }
@@ -263,35 +257,55 @@ public class Battle {
 
     public int specialty (Card card1, Card card2){
 
-        if(((Monster) card1).getMonsterType().equals("Goblin") && ((Monster) card2).getMonsterType().equals("Dragon")){
-            return 1;
+        if(card1 instanceof Monster && card2 instanceof Monster){
+            if ((((Monster) card1).getMonsterType().equals("Goblin") && ((Monster) card2).getMonsterType().equals("Dragon"))){
+                return 1;
+            }
         }
-        if(((Monster) card1).getMonsterType().equals("Dragon") && ((Monster) card2).getMonsterType().equals("Goblin")){
-            return 2;
+        if(card1 instanceof Monster && card2 instanceof Monster){
+            if(((Monster) card1).getMonsterType().equals("Dragon") && ((Monster) card2).getMonsterType().equals("Goblin")){
+                return 2;
+            }
         }
-        if(((Monster) card1).getMonsterType().equals("Wizard") && ((Monster) card2).getMonsterType().equals("Ork")){
-            return 3;
+        if(card1 instanceof Monster && card2 instanceof Monster){
+            if(((Monster) card1).getMonsterType().equals("Wizard") && ((Monster) card2).getMonsterType().equals("Ork")){
+                return 3;
+            }
         }
-        if(((Monster) card1).getMonsterType().equals("Ork") && ((Monster) card2).getMonsterType().equals("Wizard")){
-            return 4;
+        if(card1 instanceof Monster && card2 instanceof Monster){
+            if(((Monster) card1).getMonsterType().equals("Ork") && ((Monster) card2).getMonsterType().equals("Wizard")){
+                return 4;
+            }
         }
-        if(((Monster) card1).getMonsterType().equals("Knight") && (card2.getCardType().equals("Spell") && card2.getElement().equals(Elements.Water))){
-            return 5;
+        if(card1 instanceof Monster && card2 instanceof Spell) {
+            if (((Monster) card1).getMonsterType().equals("Knight") && (card2.getCardType().equals("Spell") && card2.getElement().equals(Elements.Water))) {
+                return 5;
+            }
         }
-        if((card1.getCardType().equals("Spell") && card2.getElement().equals(Elements.Water)) && ((Monster) card2).getMonsterType().equals("Knight")){
-            return 6;
+        if(card1 instanceof Spell && card2 instanceof Monster) {
+            if ((card1.getCardType().equals("Spell") && card2.getElement().equals(Elements.Water)) && ((Monster) card2).getMonsterType().equals("Knight")) {
+                return 6;
+            }
         }
-        if(((Monster) card1).getMonsterType().equals("Kraken") && card2.getCardType().equals("Spell")){
-            return 7;
+        if(card1 instanceof Monster && card2 instanceof Spell) {
+            if (((Monster) card1).getMonsterType().equals("Kraken") && card2.getCardType().equals("Spell")) {
+                return 7;
+            }
         }
-        if(card1.getCardType().equals("Spell") && ((Monster) card2).getMonsterType().equals("Kraken")){
-            return 8;
+        if(card1 instanceof Spell && card2 instanceof Monster) {
+            if (card1.getCardType().equals("Spell") && ((Monster) card2).getMonsterType().equals("Kraken")) {
+                return 8;
+            }
         }
-        if(((Monster) card1).getMonsterType().equals("Elf") && ((Monster) card2).getMonsterType().equals("Dragon")){
-            return 9;
+        if(card1 instanceof Monster && card2 instanceof Monster) {
+            if (((Monster) card1).getMonsterType().equals("Elf") && ((Monster) card2).getMonsterType().equals("Dragon")) {
+                return 9;
+            }
         }
-        if(((Monster) card1).getMonsterType().equals("Dragon") && ((Monster) card2).getMonsterType().equals("Elf")){
-            return 10;
+        if(card1 instanceof Monster && card2 instanceof Monster) {
+            if (((Monster) card1).getMonsterType().equals("Dragon") && ((Monster) card2).getMonsterType().equals("Elf")) {
+                return 10;
+            }
         }
 
         return 0;

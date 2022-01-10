@@ -20,7 +20,7 @@ public class User {
     private int elo;
     @JsonProperty("Stack")
     private  ArrayList<Card> stack;
-    @JsonProperty("Deck")
+    @JsonIgnore
     private Deck deck;
 
     public User(){}
@@ -75,6 +75,10 @@ public class User {
 
     public void setStack(ArrayList<Card> stack) {
         this.stack = stack;
+    }
+
+    public void updateStack(Card[] newCards){
+        Collections.addAll(stack, newCards);
     }
 
     public ArrayList<Card> getStack() {

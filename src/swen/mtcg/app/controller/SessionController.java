@@ -44,6 +44,7 @@ public class SessionController extends Controller{
             user = userRepository.login(user.getUsername(), user.getPassword());
             contain = objectMapper.writeValueAsString(user);
             userService.addUser(user);
+            System.out.println("Logged in User: " + user.getUsername());
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }

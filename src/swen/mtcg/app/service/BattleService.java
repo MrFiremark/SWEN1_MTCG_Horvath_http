@@ -21,43 +21,57 @@ public class BattleService {
 
     public Battle lookForActiveBattle(User user){
 
-        for (Battle battle: activeBattle) {
-            if(battle.getStatus()){
-                battle.setContestant2(user);
-                while (battle.getStatus()){
-                    try {
-                        TimeUnit.SECONDS.sleep(1);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+        if (activeBattle.size() == 0){
+            Battle newbattle = new Battle(user);
+            startBattle(newbattle);
+            waitingRoom(newbattle);
+            while (newbattle.getStatus()){
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-                stopBattle(battle);
-                return battle;
             }
-            else {
-                Battle newbattle = new Battle(user);
-                startBattle(newbattle);
-                waitingRoom(newbattle);
-                while (newbattle.getStatus()){
-                    try {
-                        TimeUnit.SECONDS.sleep(1);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+            stopBattle(newbattle);
+            return newbattle;
+        }else {
+            for (Battle battle : activeBattle) {
+                if (battle.getStatus()) {
+                    battle.setContestant2(user);
+                    waitingRoom(battle);
+                    while (battle.getStatus()) {
+                        try {
+                            TimeUnit.SECONDS.sleep(1);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
+                    stopBattle(battle);
+                    return battle;
+                } else {
+                    Battle newbattle = new Battle(user);
+                    startBattle(newbattle);
+                    waitingRoom(newbattle);
+                    while (newbattle.getStatus()) {
+                        try {
+                            TimeUnit.SECONDS.sleep(1);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    stopBattle(newbattle);
+                    return newbattle;
                 }
-                stopBattle(newbattle);
-                return battle;
             }
         }
-
-        return null;
+        return new Battle(user);
     }
 
     public void waitingRoom(Battle battle){
 
         long startmillis = System.currentTimeMillis();
         int seconds = 0;
-        while(battle.getContestant2().getUsername().length() == 0 && seconds <= 180){
+        while(battle.getContestant2() == null && seconds <= 30){
 
             try {
                 TimeUnit.SECONDS.sleep(1);
@@ -67,7 +81,7 @@ public class BattleService {
             seconds = (int)((System.currentTimeMillis() - startmillis) /1000);
 
         }
-        if (battle.getContestant2().getUsername().length() != 0){
+        if (battle.getContestant2() != null){
             battle.fight();
         }
         battle.setStatus(false);

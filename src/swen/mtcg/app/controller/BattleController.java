@@ -12,6 +12,9 @@ import swen.mtcg.server.http.HttpStatus;
 import swen.mtcg.server.util.Request;
 import swen.mtcg.server.util.Response;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class BattleController extends Controller{
 
     private final UserService userService;
@@ -46,10 +49,12 @@ public class BattleController extends Controller{
         User user = userService.getUser(username);
         String contain = "";
 
-        battleService.lookForActiveBattle(user);
+
+        List<String> log = new ArrayList<>();
+        log.addAll(battleService.lookForActiveBattle(user).getLog());
 
         try {
-            contain = objectMapper.writeValueAsString(battleService.getBattle(user).getLog());
+            contain = objectMapper.writeValueAsString(log);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
