@@ -22,13 +22,17 @@ public class UserRepository extends Repository{
                         "INSERT INTO player (id, username, password, coin, elo) VALUES (?, ?, ?, ?, ?);"
                 )
         ) {
-            statement.setObject(1, UUID.randomUUID().toString());
+            String uuid = UUID.randomUUID().toString();
+
+            statement.setObject(1, uuid);
             statement.setString(2, username);
             statement.setString(3, String.valueOf(password.hashCode()));
             statement.setInt(4, 20);
             statement.setInt(5, 100);
 
             statement.execute();
+
+            createEmptyProfile(uuid);
 
             return true;
 
@@ -247,6 +251,56 @@ public class UserRepository extends Repository{
             statement.execute();
 
             createDeck(user, cardId);
+
+        } catch (SQLException | IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void createEmptyProfile(String userid){
+        try (
+                Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(
+                        "INSERT INTO profile (userid) VALUES(?);"
+                )
+        ) {
+
+           statement.setString(1, userid);
+           statement.execute();
+
+        } catch (SQLException | IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void readProfile(String userid){
+        try (
+                Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(
+                        "SELECT userid, name, bio, image FROM profile WHERE userid = ?;"
+                )
+        ) {
+
+            statement.setString(1, userid);
+            ResultSet resultSet = statement.executeQuery();
+
+
+
+        } catch (SQLException | IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void editProfile(String userid){
+        try (
+                Connection connection = getConnection();
+                PreparedStatement statement = connection.prepareStatement(
+                        "INSERT INTO profile (userid) VALUES(?);"
+                )
+        ) {
+
+            statement.setString(1, userid);
+            statement.execute();
 
         } catch (SQLException | IOException e) {
             e.printStackTrace();

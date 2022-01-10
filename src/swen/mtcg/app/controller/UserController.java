@@ -22,10 +22,20 @@ public class UserController extends Controller{
 
     public Response handleRequest(Request request) {
 
+        String check = request.getAuthentication().substring(6).replace("-mtcgToken", "");
+        String userpath = request.getRoute().substring(7);
+
         if (request.getMethod().equals("POST")) {
             return addUser(request.getContent());
         }
-
+        if (check.equals(userpath)) {
+            if (request.getMethod().equals("GET")) {
+                return getUserData();
+            }
+            if (request.getMethod().equals("PUT")) {
+                return editUserData(request.getContent());
+            }
+        }
         return response(
                 HttpStatus.NOT_FOUND,
                 ContentType.HTML,
@@ -51,5 +61,17 @@ public class UserController extends Controller{
         }
 
         return new Response(contain);
+    }
+
+    public Response getUserData(){
+
+        return new Response();
+    }
+
+    public  Response editUserData(String json){
+
+
+
+        return new Response();
     }
 }
