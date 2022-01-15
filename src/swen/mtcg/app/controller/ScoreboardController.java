@@ -9,6 +9,9 @@ import swen.mtcg.server.http.HttpStatus;
 import swen.mtcg.server.util.Request;
 import swen.mtcg.server.util.Response;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ScoreboardController extends Controller{
 
     private final UserService userService;
@@ -25,7 +28,7 @@ public class ScoreboardController extends Controller{
 
         if (userService.checkUserLoggedIn(check)) {
             if (request.getMethod().equals("GET")) {
-                return getScoreboard();
+                return getScoreboard(check);
             }
         }
         return response(
@@ -35,13 +38,15 @@ public class ScoreboardController extends Controller{
         );
     }
 
-    public Response getScoreboard(){
+    public Response getScoreboard(String username){
 
         ObjectMapper objectMapper = new ObjectMapper();
         String contain = "";
 
+        List<String> scoreboard = new ArrayList<>(scoreboardRepository.getScoreboard(username));
+
         try {
-            objectMapper.writeValueAsString(scoreboardRepository.getScoreboard().toString());
+            contain = objectMapper.writeValueAsString(scoreboard);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }

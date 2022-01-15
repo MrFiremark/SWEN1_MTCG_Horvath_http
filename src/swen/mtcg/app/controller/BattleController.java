@@ -50,8 +50,7 @@ public class BattleController extends Controller{
         String contain = "";
 
 
-        List<String> log = new ArrayList<>();
-        log.addAll(battleService.lookForActiveBattle(user).getLog());
+        List<String> log = new ArrayList<>(battleService.lookForActiveBattle(user).getLog());
 
         try {
             contain = objectMapper.writeValueAsString(log);

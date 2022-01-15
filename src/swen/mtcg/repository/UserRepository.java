@@ -300,7 +300,7 @@ public class UserRepository extends Repository{
         try (
                 Connection connection = getConnection();
                 PreparedStatement statement = connection.prepareStatement(
-                        "UPDATE player SET name = ?, bio = ?, image = ? WHERE userid = ?;"
+                        "UPDATE profile SET name = ?, bio = ?, image = ? WHERE userid = ?;"
                 )
         ) {
 

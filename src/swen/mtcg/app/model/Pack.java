@@ -7,7 +7,7 @@ public class Pack {
 
     public Pack() {}
 
-    public int getCost() {
+    public int getCost()  {
         return cost;
     }
 

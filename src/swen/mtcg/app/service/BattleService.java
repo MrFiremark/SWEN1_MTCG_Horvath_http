@@ -72,7 +72,6 @@ public class BattleService {
                 e.printStackTrace();
             }
             seconds = (int)((System.currentTimeMillis() - startmillis) /1000);
-
         }
         if (battle.getContestant2() != null){
             battle.fight();

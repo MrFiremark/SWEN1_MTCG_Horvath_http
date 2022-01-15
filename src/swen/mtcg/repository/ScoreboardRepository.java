@@ -11,20 +11,46 @@ import java.util.*;
 
 public class ScoreboardRepository extends Repository{
 
-    public Map<String, String> getScoreboard(){
+    public List<String> getScoreboard(String username){
 
-        Map<String, String> scoreboard = new HashMap<>();
+        List<String> scoreboard = new ArrayList<>();
 
         try (
                 Connection connection = getConnection();
                 PreparedStatement statement = connection.prepareStatement(
-                        "SELECT elo, id FROM player ORDER BY elo"
+                        "SELECT row_number() over (ORDER BY elo DESC) as rank, elo, username from player LIMIT 100"
+                );
+                PreparedStatement statement1 = connection.prepareStatement(
+                        "SELECT * FROM (SELECT row_number() over (ORDER BY elo DESC) as rank, elo, username from player) a WHERE username = ?;"
                 )
         ) {
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
-                scoreboard.put(resultSet.getString("id"), String.valueOf(resultSet.getInt("elo")));
+                String stringBuilder = "Rank " +
+                        resultSet.getString("rank") +
+                        " - " +
+                        "User: " +
+                        resultSet.getString("username") +
+                        " | ELO: " +
+                        resultSet.getInt("elo");
+                scoreboard.add(stringBuilder);
+
+            }
+
+            statement1.setString(1, username);
+            resultSet = statement1.executeQuery();
+            scoreboard.add("");
+            if (resultSet.next()){
+                String stringBuilder = "YOUR RANK -> " +
+                        "Rank " +
+                        resultSet.getString("rank") +
+                        " - " +
+                        "User: " +
+                        resultSet.getString("username") +
+                        " | ELO: " +
+                        resultSet.getInt("elo");
+                scoreboard.add(stringBuilder);
             }
 
         } catch (SQLException | IOException e) {
